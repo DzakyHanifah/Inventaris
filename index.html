@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title> Inventaris • Monitoring & Pemeliharaan Alat Kerja</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-noise"></div>
+
+  <!-- Topbar (muncul saat sudah login) -->
+  <header class="topbar" id="topbar" aria-hidden="true">
+    <div class="topbar__left">
+      <div class="brand">
+        <div class="brand__mark">BEE</div>
+        <div class="brand__text">
+          <div class="brand__title"></div>
+          <div class="brand__subtitle">Monitoring & Pemeliharaan Alat Kerja Ketinggian</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar__right">
+      <div class="userchip" id="userchip">
+        <div class="userchip__avatar" aria-hidden="true">👷</div>
+        <div class="userchip__meta">
+          <div class="userchip__name" id="userName">-</div>
+          <div class="userchip__role" id="userRole">-</div>
+        </div>
+      </div>
+      <div>
+<button class="btn btn--ghost" id="btnLogout" type="button">Keluar</button>
+      </div>
+      
+    </div>
+  </header>
+
+  <!-- Auth layout -->
+  <main class="auth" id="authLayout">
+    <!-- LOGIN -->
+    <section class="authcard" id="page-login" data-page="login" aria-label="Halaman Login">
+      <div class="authcard__head">
+        <div class="authcard__logo">MI</div>
+        <h1>Masuk</h1>
+        <p class="muted">Kelola inventaris alat dan jadwal pemeliharaan secara terpusat.</p>
+      </div>
+
+      <form class="form" id="loginForm" autocomplete="on">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" placeholder="nama@perusahaan.com" required />
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input type="password" name="password" placeholder="••••••••" required />
+        </label>
+
+        <div class="row">
+          <label class="check">
+            <input type="checkbox" name="remember" />
+            <span>Ingat saya</span>
+          </label>
+
+          <a class="link" href="#register">Buat akun</a>
+        </div>
+
+        <button class="btn btn--primary" type="submit">Masuk</button>
+        <div class="hint" id="loginHint"></div>
+
+        <div class="divider"><span>Demo cepat</span></div>
+        <button class="btn btn--soft" id="btnUseDemo" type="button">Gunakan akun demo</button>
+      </form>
+    </section>
+
+    <!-- REGISTER -->
+    <section class="authcard" id="page-register" data-page="register" aria-label="Halaman Registrasi" hidden>
+      <div class="authcard__head">
+        <div class="authcard__logo">MI</div>
+        <h1>Registrasi</h1>
+        <p class="muted">Buat akun untuk mulai mengelola alat, inspeksi, dan pemeliharaan.</p>
+      </div>
+
+      <form class="form" id="registerForm" autocomplete="on">
+        <div class="grid2">
+          <label class="field">
+            <span>Nama</span>
+            <input type="text" name="name" placeholder="Nama lengkap" required />
+          </label>
+
+          <label class="field">
+            <span>Peran</span>
+            <select name="role" required>
+              <option value="Admin">Admin</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Teknisi">Teknisi</option>
+              <option value="Petugas Lapangan">Petugas Lapangan</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" placeholder="nama@perusahaan.com" required />
+        </label>
+
+        <div class="grid2">
+          <label class="field">
+            <span>Password</span>
+            <input type="password" name="password" placeholder="Minimal 6 karakter" minlength="6" required />
+          </label>
+
+          <label class="field">
+            <span>Konfirmasi Password</span>
+            <input type="password" name="password2" placeholder="Ulangi password" minlength="6" required />
+          </label>
+        </div>
+
+        <button class="btn btn--primary" type="submit">Daftar</button>
+        <div class="hint" id="registerHint"></div>
+
+        <div class="row row--center">
+          <span class="muted">Sudah punya akun?</span>
+          <a class="link" href="#login">Masuk</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- App layout -->
+  <div class="app" id="appLayout" hidden>
+    <aside class="sidebar" aria-label="Navigasi">
+      <nav class="nav">
+        <a class="nav__item" href="#home" data-nav="home">
+          <span class="nav__icon">🏠</span>
+          <span>Home / Dashboard</span>
+        </a>
+        <a class="nav__item" href="#create" data-nav="create">
+          <span class="nav__icon">➕</span>
+          <span>Tambah Alat</span>
+        </a>
+        <a class="nav__item" href="#maintenance" data-nav="maintenance">
+          <span class="nav__icon">🗓️</span>
+          <span>Jadwal Pemeliharaan</span>
+          <span class="pill" id="pillDue">0</span>
+        </a>
+        <a class="nav__item" href="#reports" data-nav="reports">
+          <span class="nav__icon">📊</span>
+          <span>Laporan</span>
+          <span class="pill pill--ghost">Soon</span>
+        </a>
+        <a class="nav__item" href="#settings" data-nav="settings">
+          <span class="nav__icon">⚙️</span>
+          <span>Pengaturan</span>
+          <span class="pill pill--ghost">Soon</span>
+        </a>
+      </nav>
+
+      <div class="sidebar__foot">
+        <div class="tip">
+          <div class="tip__title">Tips</div>
+          <div class="tip__text">Gunakan filter status untuk cepat menemukan alat yang <b>Perlu Inspeksi</b> atau <b>Tidak Layak</b>.</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content" aria-label="Konten">
+      <!-- HOME -->
+      <section class="page" id="page-home" data-page="home" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Dashboard</h2>
+            <p class="muted">Ringkasan kondisi alat dan daftar inventaris.</p>
+          </div>
+          <div class="pagehead__actions">
+            <a class="btn btn--primary" href="#create">+ Tambah Alat</a>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card__label">Total Alat</div>
+            <div class="card__value" id="statTotal">0</div>
+            <div class="card__hint muted">Semua aset terdaftar</div>
+          </div>
+          <div class="card">
+            <div class="card__label">Siap Pakai</div>
+            <div class="card__value" id="statReady">0</div>
+            <div class="card__hint muted">Status “Siap Pakai”</div>
+          </div>
+          <div class="card">
+            <div class="card__label">Perlu Inspeksi</div>
+            <div class="card__value" id="statInspect">0</div>
+            <div class="card__hint muted">Wajib dicek sebelum digunakan</div>
+          </div>
+          <div class="card">
+            <div class="card__label">Tidak Layak</div>
+            <div class="card__value" id="statReject">0</div>
+            <div class="card__hint muted">Harus dipisahkan & ditandai</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head">
+            <div class="panel__title">Inventaris Alat</div>
+            <div class="panel__tools">
+              <input class="input" id="searchInput" type="search" placeholder="Cari nama / kategori / lokasi / PIC..." />
+              <select class="select" id="statusFilter">
+                <option value="">Semua Status</option>
+                <option value="Siap Pakai">Siap Pakai</option>
+                <option value="Perlu Inspeksi">Perlu Inspeksi</option>
+                <option value="Perbaikan">Perbaikan</option>
+                <option value="Tidak Layak">Tidak Layak</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="tablewrap">
+            <table class="table" aria-label="Tabel Inventaris">
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Nama Alat</th>
+                  <th>Kategori</th>
+                  <th>Lokasi</th>
+                  <th>Status</th>
+                  <th>Inspeksi Terakhir</th>
+                  <th>Due Pemeliharaan</th>
+                  <th>PIC</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="equipmentTbody">
+                <!-- rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel__foot muted" id="tableFoot">0 data</div>
+        </div>
+      </section>
+
+      <!-- CREATE -->
+      <section class="page" id="page-create" data-page="create" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Tambah Alat</h2>
+            <p class="muted">Input data alat kerja. Nanti bisa ditambah modul inspeksi & pemeliharaan detail.</p>
+          </div>
+        </div>
+
+        <form class="panel form" id="createForm">
+          <div class="grid2">
+            <label class="field">
+              <span>Nama Alat</span>
+              <input name="name" type="text" placeholder="Contoh: Full Body Harness" required />
+            </label>
+
+            <label class="field">
+              <span>Kategori</span>
+              <select name="category" required>
+                <option value="Fall Protection">Fall Protection</option>
+                <option value="Rope Access">Rope Access</option>
+                <option value="Scaffolding">Scaffolding</option>
+                <option value="Ladder">Ladder</option>
+                <option value="Lifting & Rigging">Lifting & Rigging</option>
+                <option value="APD Lainnya">APD Lainnya</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Lokasi</span>
+              <input name="location" type="text" placeholder="Gudang A / Site B / Workshop" required />
+            </label>
+
+            <label class="field">
+              <span>Status</span>
+              <select name="status" required>
+                <option value="Siap Pakai">Siap Pakai</option>
+                <option value="Perlu Inspeksi">Perlu Inspeksi</option>
+                <option value="Perbaikan">Perbaikan</option>
+                <option value="Tidak Layak">Tidak Layak</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Tanggal Inspeksi Terakhir</span>
+              <input name="lastInspection" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>Jadwal Pemeliharaan Berikutnya (Due)</span>
+              <input name="nextMaintenance" type="date" required />
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>PIC (Penanggung Jawab)</span>
+              <input name="pic" type="text" placeholder="Nama PIC / Tim" required />
+            </label>
+
+            <label class="field">
+              <span>Nomor Seri (opsional)</span>
+              <input name="serial" type="text" placeholder="SN / Batch / Tag" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Catatan</span>
+            <textarea name="notes" rows="3" placeholder="Contoh: perlu penggantian webbing / hasil inspeksi visual..."></textarea>
+          </label>
+
+          <div class="form__actions">
+            <button class="btn btn--primary" type="submit">Simpan</button>
+            <a class="btn btn--ghost" href="#home">Batal</a>
+            <div class="hint" id="createHint"></div>
+          </div>
+        </form>
+      </section>
+
+      <!-- EDIT -->
+      <section class="page" id="page-edit" data-page="edit" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Edit Alat</h2>
+            <p class="muted">Perbarui status, jadwal, lokasi, dan catatan.</p>
+          </div>
+        </div>
+
+        <form class="panel form" id="editForm">
+          <input type="hidden" name="id" />
+
+          <div class="grid2">
+            <label class="field">
+              <span>Kode Alat</span>
+              <input name="code" type="text" disabled />
+            </label>
+
+            <label class="field">
+              <span>Status</span>
+              <select name="status" required>
+                <option value="Siap Pakai">Siap Pakai</option>
+                <option value="Perlu Inspeksi">Perlu Inspeksi</option>
+                <option value="Perbaikan">Perbaikan</option>
+                <option value="Tidak Layak">Tidak Layak</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Nama Alat</span>
+              <input name="name" type="text" required />
+            </label>
+
+            <label class="field">
+              <span>Kategori</span>
+              <select name="category" required>
+                <option value="Fall Protection">Fall Protection</option>
+                <option value="Rope Access">Rope Access</option>
+                <option value="Scaffolding">Scaffolding</option>
+                <option value="Ladder">Ladder</option>
+                <option value="Lifting & Rigging">Lifting & Rigging</option>
+                <option value="APD Lainnya">APD Lainnya</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Lokasi</span>
+              <input name="location" type="text" required />
+            </label>
+
+            <label class="field">
+              <span>PIC</span>
+              <input name="pic" type="text" required />
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Tanggal Inspeksi Terakhir</span>
+              <input name="lastInspection" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>Due Pemeliharaan</span>
+              <input name="nextMaintenance" type="date" required />
+            </label>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Nomor Seri (opsional)</span>
+              <input name="serial" type="text" />
+            </label>
+
+            <label class="field">
+              <span>Terakhir Diubah Oleh</span>
+              <input name="updatedBy" type="text" disabled />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Catatan</span>
+            <textarea name="notes" rows="3"></textarea>
+          </label>
+
+          <div class="form__actions">
+            <button class="btn btn--primary" type="submit">Update</button>
+            <a class="btn btn--ghost" href="#home">Kembali</a>
+            <div class="hint" id="editHint"></div>
+          </div>
+        </form>
+      </section>
+
+      <!-- MAINTENANCE (placeholder + list due) -->
+      <section class="page" id="page-maintenance" data-page="maintenance" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Jadwal Pemeliharaan</h2>
+            <p class="muted">Daftar alat yang mendekati jatuh tempo atau sudah overdue.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head">
+            <div class="panel__title">Due / Overdue</div>
+            <div class="panel__tools">
+              <select class="select" id="dueFilter">
+                <option value="7">Due 7 hari</option>
+                <option value="14">Due 14 hari</option>
+                <option value="30">Due 30 hari</option>
+                <option value="0">Overdue saja</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="tablewrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Nama</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th>Selisih</th>
+                  <th>PIC</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="dueTbody"></tbody>
+            </table>
+          </div>
+          <div class="panel__foot muted" id="dueFoot">0 data</div>
+        </div>
+
+        <div class="notice">
+          <div class="notice__title">Catatan pengembangan</div>
+          <div class="notice__text">
+            Halaman ini nantinya cocok ditambah fitur: <b>buat work order</b>, <b>input hasil pemeliharaan</b>, upload foto, dan checklist inspeksi.
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS placeholder -->
+      <section class="page" id="page-reports" data-page="reports" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Laporan</h2>
+            <p class="muted">Placeholder (nanti bisa rekap status, compliance inspeksi, utilisasi, dll).</p>
+          </div>
+        </div>
+        <div class="panel">
+          <p class="muted">Saran modul laporan:</p>
+          <ul class="list">
+            <li>Rekap status alat per lokasi/kategori</li>
+            <li>Alat “Tidak Layak” dan alasan</li>
+            <li>Kepatuhan inspeksi (tepat waktu vs terlambat)</li>
+            <li>Riwayat pemeliharaan per alat</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SETTINGS placeholder -->
+      <section class="page" id="page-settings" data-page="settings" hidden>
+        <div class="pagehead">
+          <div>
+            <h2>Pengaturan</h2>
+            <p class="muted">Placeholder (role, lokasi, kategori, interval inspeksi/pemeliharaan).</p>
+          </div>
+        </div>
+        <div class="panel">
+          <p class="muted">Saran pengaturan yang umum:</p>
+          <ul class="list">
+            <li>Master data: lokasi, kategori, vendor</li>
+            <li>Interval inspeksi/pemeliharaan per kategori alat</li>
+            <li>Template checklist inspeksi</li>
+            <li>Manajemen user & role</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Detail -->
+  <dialog class="modal" id="detailModal">
+    <div class="modal__head">
+      <div>
+        <div class="modal__title" id="detailTitle">Detail</div>
+        <div class="muted" id="detailSub">-</div>
+      </div>
+      <button class="btn btn--ghost" id="btnCloseModal" type="button">Tutup</button>
+    </div>
+    <div class="modal__body" id="detailBody"></div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
